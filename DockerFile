@@ -1,0 +1,35 @@
+#Docker image for flask python
+#version 1.0
+#python3.10
+FROM python:3.10
+#复制文件到 容器/Demo目录下
+#COPY current to dst dir
+COPY . /AIWEB/
+#指定容器工作目录
+WORKDIR /AIWEB/
+#安装项目依赖
+#-i https://mirrors.aliyun.com/pypi/simple/
+RUN pip install -r requment.txt -i https://mirrors.aliyun.com/pypi/simple/
+# 同步时区
+# CentOS
+RUN echo "Asia/shanghai" > /etc/timezone
+# Ubuntu
+#RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+#
+#ENTRYPOINT ["python","app.py"]
+#or
+#CMD python app.py
+# 采用 gunicorn improve speed
+CMD ["gunicorn", "run:app", "-c", "./gunicorn.conf.py"]
+#编译 在dockerfile文件夹下执行
+#docker build -t image_name current_folder
+
+#运行 -d后台运行 本机80端口映射到容器的5050
+#docker run -d -p 80:5050 --name container_name image_name
+
+# 运行 -v挂载目录
+
+# docker run -d -p 80:5050 -v /home/xxx:/Demo --name container_name image_name
+
+#调试用
+#docker run -it -p 80:5050 --name container_name image_name
